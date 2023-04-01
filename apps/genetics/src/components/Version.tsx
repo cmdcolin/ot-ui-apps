@@ -1,3 +1,4 @@
+import React from 'react';
 import { gql, useQuery } from '@apollo/client';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';

@@ -27,8 +27,8 @@ const PlotContainer = ({
   right,
   children,
 }: {
-  loading: boolean;
-  error: { graphQLErrors: { message: string }[] };
+  loading?: boolean;
+  error?: { graphQLErrors: { message: string }[] };
   left: React.ReactNode;
   center: React.ReactNode;
   right: React.ReactNode;

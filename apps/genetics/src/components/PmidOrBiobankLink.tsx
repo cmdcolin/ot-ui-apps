@@ -1,7 +1,13 @@
 import React from 'react';
 import { Link } from '../ot-ui-components';
 
-const PmidOrBiobankLink = ({ studyId, pmid }) => {
+const PmidOrBiobankLink = ({
+  studyId,
+  pmid,
+}: {
+  studyId: string;
+  pmid: string;
+}) => {
   if (studyId) {
     if (studyId.startsWith('NEALE2')) {
       return (

@@ -1,10 +1,10 @@
-import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import React, { ChangeEvent } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import MuiSlider from '@material-ui/core/Slider';
 import Grid from '@material-ui/core/Grid';
 
-const styles = {
+const useStyles = makeStyles({
   root: {
     width: 200,
     padding: '0 20px',
@@ -18,15 +18,30 @@ const styles = {
   max: {
     fontSize: '0.7rem',
   },
-};
+});
 
-const Slider = ({ classes, label, value, min, max, step, onChange }) => {
+const Slider = ({
+  label,
+  value,
+  min,
+  max,
+  step,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (event: ChangeEvent<{}>, value: number | number[]) => void;
+}) => {
+  const classes = useStyles();
   return (
     <div className={classes.root}>
       <Typography>{label}</Typography>
       <div className={classes.sliderContainer}>
         <MuiSlider
-          classes={{ container: classes.slider }}
+          //classes={{ container: classes.slider }} does not exist?
           {...{ value, min, max, step, onChange }}
         />
       </div>
@@ -43,4 +58,4 @@ const Slider = ({ classes, label, value, min, max, step, onChange }) => {
   );
 };
 
-export default withStyles(styles)(Slider);
+export default Slider;

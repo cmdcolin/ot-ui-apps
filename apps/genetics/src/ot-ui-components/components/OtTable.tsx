@@ -82,7 +82,7 @@ function TablePaginationActions({
   );
 }
 
-interface Column {
+export interface Column {
   id: string;
   comparator?: <T>(a: T, b: T) => number;
   verticalHeader?: boolean;
@@ -215,16 +215,16 @@ function OtTable({
   sortBy: string;
   order?: 'desc' | 'asc';
   pageSize?: number;
-  loading: boolean;
-  error: { graphQLErrors: { message: string }[] };
+  loading?: boolean;
+  error?: { graphQLErrors: { message: string }[] };
   columns: Column[];
   data: Item[];
   columnsFixed?: Column[];
   dataFixed?: Item[];
   verticalHeaders?: any;
-  left?: boolean;
+  left?: React.ReactNode;
   center?: boolean;
-  message?: string;
+  message?: React.ReactNode;
   filters?: unknown[];
   downloadFileStem: string;
   excludeDownloadColumns?: string[];

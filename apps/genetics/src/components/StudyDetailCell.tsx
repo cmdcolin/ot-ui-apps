@@ -1,6 +1,16 @@
 import React from 'react';
 
-const StudyDetailCell = ({ pubAuthor, pubDate, traitReported, pubJournal }) => {
+const StudyDetailCell = ({
+  pubAuthor,
+  pubDate,
+  traitReported,
+  pubJournal,
+}: {
+  pubAuthor: string;
+  pubDate: string;
+  traitReported: string;
+  pubJournal: string;
+}) => {
   let pubInfo = '';
   if (pubAuthor && pubDate) {
     pubInfo = ` ${pubAuthor} ${new Date(pubDate).getFullYear()}`;

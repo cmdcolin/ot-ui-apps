@@ -1,18 +1,25 @@
 import React from 'react';
-import IconButton from '@material-ui/core/IconButton';
+import IconButton, { IconButtonProps } from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
 import { Link, OtTable, commaSeparate } from '../ot-ui-components';
 
 import ManhattanFlat from '../components/ManhattanFlat';
+import { Column, Item } from '../ot-ui-components/components/OtTable';
 
-const CloseButton = props => (
+const CloseButton = (props: IconButtonProps) => (
   <IconButton {...props}>
     <CloseIcon />
   </IconButton>
 );
 
-export const tableColumns = ({ onDeleteStudy, onClickIntersectionLocus }) => [
+export const tableColumns = ({
+  onDeleteStudy,
+  onClickIntersectionLocus,
+}: {
+  onDeleteStudy?: (arg: string) => () => void;
+  onClickIntersectionLocus?: (arg: string) => () => void;
+}): Column[] => [
   {
     id: 'deleteRow',
     label: 'Remove',
@@ -97,6 +104,15 @@ function ManhattansTable({
   onDeleteStudy,
   onClickIntersectionLocus,
   pileupPseudoStudy,
+}: {
+  loading?: boolean;
+  error: { graphQLErrors: { message: string }[] };
+  select?: React.ReactNode;
+  studies: Item[];
+  rootStudy: Item;
+  onDeleteStudy: (arg: string) => () => void;
+  onClickIntersectionLocus: (arg: string) => () => void;
+  pileupPseudoStudy: Item;
 }) {
   const columns = tableColumns({ onDeleteStudy });
   const columnsFixed = tableColumns({ onClickIntersectionLocus });

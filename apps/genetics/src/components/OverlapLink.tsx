@@ -1,9 +1,9 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 
 import { Link, Button, OverlapIcon } from '../ot-ui-components';
 
-const styles = {
+const useStyles = makeStyles({
   button: {
     lineHeight: 1,
     minWidth: '110px',
@@ -31,9 +31,10 @@ const styles = {
   link: {
     textDecoration: 'none',
   },
-};
+});
 
-const OverlapLink = ({ big, studyId, classes }) => {
+const OverlapLink = ({ big, studyId }: { big?: boolean; studyId: string }) => {
+  const classes = useStyles();
   return (
     <Link to={`/study-comparison/${studyId}`} className={classes.link}>
       <Button className={big ? classes.buttonBig : classes.button}>
@@ -44,4 +45,4 @@ const OverlapLink = ({ big, studyId, classes }) => {
   );
 };
 
-export default withStyles(styles)(OverlapLink);
+export default OverlapLink;
