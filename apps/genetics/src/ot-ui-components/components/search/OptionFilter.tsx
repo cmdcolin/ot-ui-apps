@@ -25,7 +25,7 @@ const Option = ({
   children,
   data,
 }: {
-  children?: React.ReactElement;
+  children: React.ReactNode;
   data: { chained: boolean; selected: boolean };
 }) => {
   const classes = useStyles();

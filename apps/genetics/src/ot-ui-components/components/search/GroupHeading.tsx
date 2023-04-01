@@ -1,8 +1,8 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   groupHeading: {
     padding: '0 0.5rem',
     borderBottom: `1px solid ${theme.palette.secondary.main}`,
@@ -11,9 +11,10 @@ const styles = theme => ({
     fontSize: '0.75rem',
     color: theme.palette.secondary.main,
   },
-});
+}));
 
-const GroupHeading = ({ classes, children }) => {
+const GroupHeading = ({ children }: { children: React.ReactNode }) => {
+  const classes = useStyles();
   return (
     <div className={classes.groupHeading}>
       <Typography className={classes.groupHeadingText} variant="body1">
@@ -23,4 +24,4 @@ const GroupHeading = ({ classes, children }) => {
   );
 };
 
-export default withStyles(styles)(GroupHeading);
+export default GroupHeading;
