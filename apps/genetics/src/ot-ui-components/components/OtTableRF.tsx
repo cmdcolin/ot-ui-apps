@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
@@ -12,32 +11,15 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Tooltip from '@material-ui/core/Tooltip';
 import Badge from '@material-ui/core/Badge';
-import Button from '@material-ui/core/Button';
 import HelpIcon from '@material-ui/icons/Help';
 
 import PlotContainer from './PlotContainer';
 import PlotContainerSection from './PlotContainerSection';
-import downloadTable from '../helpers/downloadTable';
 import TablePaginationActions from './TablePaginationActions';
+import { Column, Item } from './OtTable';
 import { getComparator } from '../../../../platform/src/components/Table/sortingAndFiltering';
 
 const PAGE_SIZE = 10;
-
-export interface Column {
-  style?: Record<string, any>;
-  width?: number;
-  id: string;
-  orderable?: boolean;
-  comparator?: <T>(a: T, b: T) => number;
-  verticalHeader?: boolean;
-  tooltip?: React.ReactNode;
-  label: React.ReactNode;
-  export?: (item: Item) => boolean; // used only in one spot that I found
-  renderCell?: (item: Item) => React.ReactNode;
-  renderFilter?: () => React.ReactNode;
-}
-
-export type Item = Record<string, any>;
 
 const useStyles = makeStyles(theme => ({
   tableWrapper: {
@@ -78,6 +60,13 @@ const useStyles = makeStyles(theme => ({
       paddingRight: '24px',
     },
   },
+  tableCellSpanHeader: {
+    borderLeft: '1px solid #E0E0E0',
+    paddingLeft: '5px',
+    '&:first-child': {
+      borderLeft: 'none',
+    },
+  },
   tableCellHeaderVertical: {
     textAlign: 'center',
     verticalAlign: 'bottom',
@@ -103,7 +92,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function OtTable({
+function OtTableRF({
   sortBy: sortByInitial,
   order: orderInitial,
   pageSize = PAGE_SIZE,
@@ -118,10 +107,11 @@ function OtTable({
   center,
   message,
   filters,
-  downloadFileStem,
-  excludeDownloadColumns,
-  reportTableSortEvent,
-  reportTableDownloadEvent,
+  totalRowsCount,
+  headerGroups,
+  serverSide,
+  tableRowComponent,
+  onPageSort,
 }: {
   sortBy: string;
   order?: 'desc' | 'asc';
@@ -137,15 +127,33 @@ function OtTable({
   center?: boolean;
   message?: React.ReactNode;
   filters?: unknown[];
-  downloadFileStem: string;
+  downloadFileStem?: string;
   excludeDownloadColumns?: string[];
+  totalRowsCount?: number;
+  headerGroups: {
+    colspan: number;
+    label: React.ReactNode;
+  }[];
+  tableRowComponent?: React.FC<any>;
+  serverSide?: boolean;
   reportTableSortEvent?: (sortBy: string, order: string) => void;
   reportTableDownloadEvent?: (format: string) => void;
+  onPageSort?: (arg: {
+    page?: number;
+    pageSize?: number;
+    sortBy?: string;
+    order?: string;
+  }) => void;
 }) {
   const [page, setPage] = useState(0);
   const [sortBy, setSortBy] = useState(sortByInitial);
   const [order, setOrder] = useState(orderInitial);
   const classes = useStyles();
+
+  const handleChangePage = (page: number) => {
+    setPage(page);
+    onPageSort?.({ page, pageSize });
+  };
 
   const selectSortColumn = (sortByParam: string) => {
     let order = 'desc' as 'asc' | 'desc';
@@ -154,29 +162,10 @@ function OtTable({
       order = 'asc';
     }
 
-    if (reportTableSortEvent) {
-      reportTableSortEvent(sortBy, order);
-    }
+    onPageSort?.({ sortBy, order });
 
     setSortBy(sortBy);
     setOrder(order);
-  };
-
-  const handleTableDownload = (format: string) => {
-    if (reportTableDownloadEvent) {
-      reportTableDownloadEvent(format);
-    }
-
-    const headerMap = excludeDownloadColumns
-      ? columns.filter(column => !excludeDownloadColumns.includes(column.id))
-      : columns;
-
-    downloadTable({
-      headerMap,
-      rows: data,
-      format,
-      filenameStem: downloadFileStem,
-    });
   };
 
   const filterRow = filters ? (
@@ -189,45 +178,7 @@ function OtTable({
     </TableRow>
   ) : null;
   return (
-    <PlotContainer
-      loading={loading}
-      error={error}
-      left={left}
-      center={center}
-      right={
-        <Grid container justifyContent="flex-end" spacing={1}>
-          <Grid item>
-            <Typography variant="caption" className={classes.downloadHeader}>
-              Download table as
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Button
-              variant="outlined"
-              onClick={() => handleTableDownload('json')}
-            >
-              JSON
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button
-              variant="outlined"
-              onClick={() => handleTableDownload('csv')}
-            >
-              CSV
-            </Button>
-          </Grid>
-          <Grid item className={classes.buttonMargin}>
-            <Button
-              variant="outlined"
-              onClick={() => handleTableDownload('tsv')}
-            >
-              TSV
-            </Button>
-          </Grid>
-        </Grid>
-      }
-    >
+    <PlotContainer loading={loading} error={error} left={left} center={center}>
       {message ? (
         <PlotContainerSection>
           <div>
@@ -239,6 +190,22 @@ function OtTable({
         <div className={classes.tableWrapper}>
           <Table>
             <TableHead>
+              {headerGroups ? (
+                <TableRow>
+                  {headerGroups.map((g, i) => (
+                    <TableCell
+                      colSpan={g.colspan}
+                      key={i}
+                      className={classNames(
+                        classes.tableCellHeader,
+                        classes.tableCellSpanHeader
+                      )}
+                    >
+                      {g.label}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ) : null}
               <TableRow>
                 {columns.map(column => (
                   <TableCell
@@ -247,36 +214,43 @@ function OtTable({
                       [classes.tableCellHeaderVertical]: column.verticalHeader,
                       [classes.tableCellVertical]: column.verticalHeader,
                     })}
+                    style={{
+                      width: column.width,
+                    }}
                   >
-                    <TableSortLabel
-                      active={column.id === sortBy}
-                      direction={order}
-                      onClick={selectSortColumn.bind(null, column.id)}
-                      className={
-                        column.verticalHeader
-                          ? classes.verticalHeader
-                          : undefined
-                      }
-                    >
-                      {column.tooltip ? (
-                        <Badge
-                          className={classes.badgeWithTooltip}
-                          badgeContent={
-                            <Tooltip
-                              title={column.tooltip}
-                              placement="top"
-                              interactive
-                            >
-                              <HelpIcon className={classes.tooltipIcon} />
-                            </Tooltip>
-                          }
-                        >
-                          {column.label}
-                        </Badge>
-                      ) : (
-                        column.label
-                      )}
-                    </TableSortLabel>
+                    {column.orderable !== false ? (
+                      <TableSortLabel
+                        active={column.id === sortBy}
+                        direction={order}
+                        onClick={selectSortColumn.bind(null, column.id)}
+                        className={
+                          column.verticalHeader
+                            ? classes.verticalHeader
+                            : undefined
+                        }
+                      >
+                        {column.tooltip ? (
+                          <Badge
+                            className={classes.badgeWithTooltip}
+                            badgeContent={
+                              <Tooltip
+                                title={column.tooltip}
+                                placement="top"
+                                interactive
+                              >
+                                <HelpIcon className={classes.tooltipIcon} />
+                              </Tooltip>
+                            }
+                          >
+                            {column.label}
+                          </Badge>
+                        ) : (
+                          column.label
+                        )}
+                      </TableSortLabel>
+                    ) : (
+                      column.label
+                    )}
                   </TableCell>
                 ))}
                 {verticalHeaders ? (
@@ -294,6 +268,9 @@ function OtTable({
                         classes.tableRow,
                         classes.tableRowFixed
                       )}
+                      // @ts-expect-error unclear why it doesn't like this
+                      component={tableRowComponent}
+                      data={row}
                     >
                       {columnsFixed.map(column => (
                         <TableCell
@@ -316,15 +293,25 @@ function OtTable({
               {data
                 .slice()
                 .sort(getComparator(columns, sortBy, order))
-                .slice(page * pageSize, page * pageSize + pageSize)
+                .slice(
+                  (serverSide ? 0 : page) * pageSize,
+                  (serverSide ? 0 : page) * pageSize + pageSize
+                )
                 .map((row, index) => (
-                  <TableRow key={index} className={classes.tableRow}>
+                  <TableRow
+                    key={index}
+                    className={classes.tableRow}
+                    // @ts-expect-error unclear why it doesn't like this
+                    component={tableRowComponent}
+                    data={row}
+                  >
                     {columns.map(column => (
                       <TableCell
                         key={column.id}
                         className={classNames(classes.tableCell, {
                           [classes.tableCellVertical]: column.verticalHeader,
                         })}
+                        style={column.style}
                       >
                         {column.renderCell
                           ? column.renderCell(row)
@@ -348,8 +335,10 @@ function OtTable({
         ) : null}
         <TablePagination
           component="div"
-          count={data.length}
-          onPageChange={(event, page) => setPage(page)}
+          // can maybe typescript this a little better so totalRowsCount is
+          // known to be defined if serverSide is true
+          count={serverSide ? totalRowsCount || 0 : data.length}
+          onPageChange={(_event, page) => handleChangePage(page)}
           page={page}
           rowsPerPage={pageSize}
           rowsPerPageOptions={[]}
@@ -360,4 +349,4 @@ function OtTable({
   );
 }
 
-export default OtTable;
+export default OtTableRF;

@@ -41,7 +41,7 @@ function DataDownloader({
 }: {
   tableHeaders: string[];
   rows: any[];
-  loading: boolean;
+  loading?: boolean;
   fileStem: string;
 }) {
   const classes = useStyles();

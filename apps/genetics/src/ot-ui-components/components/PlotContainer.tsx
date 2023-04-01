@@ -31,7 +31,7 @@ const PlotContainer = ({
   error?: { graphQLErrors: { message: string }[] };
   left: React.ReactNode;
   center: React.ReactNode;
-  right: React.ReactNode;
+  right?: React.ReactNode;
   children: React.ReactNode;
 }) => {
   const classes = useStyles();

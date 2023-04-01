@@ -52,11 +52,10 @@ function ManhattanTable({
   error,
   data,
   studyId,
-  hasSumstats,
   filenameStem,
 }: {
   loading?: boolean;
-  error: unknown;
+  error: { graphQLErrors: { message: string }[] };
   data: Item[];
   studyId: string;
   hasSumstats: boolean;
