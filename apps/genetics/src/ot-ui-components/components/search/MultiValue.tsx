@@ -1,12 +1,13 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import MuiChip from '@material-ui/core/Chip';
 import CancelIcon from '@material-ui/icons/Cancel';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   miniChip: {
     color: 'white',
     backgroundColor: props =>
+      // @ts-expect-error
       props.data.chipcolor ? props.data.chipcolor : theme.palette.primary.main,
     margin: '1px',
     height: '20px',
@@ -15,9 +16,20 @@ const styles = theme => ({
   deleteIcon: {
     fontSize: '16px',
   },
-});
+}));
 
-const Chip = ({ classes, children, selectProps, removeProps, data }) => {
+const Chip = ({
+  children,
+  selectProps,
+  removeProps,
+  data,
+}: {
+  children?: React.ReactElement;
+  selectProps: { getOptionValue: (arg: unknown) => string };
+  removeProps: { onClick: () => void };
+  data: unknown;
+}) => {
+  const classes = useStyles();
   return (
     <MuiChip
       key={selectProps.getOptionValue(data)}
@@ -32,4 +44,4 @@ const Chip = ({ classes, children, selectProps, removeProps, data }) => {
   );
 };
 
-export default withStyles(styles)(Chip);
+export default Chip;
