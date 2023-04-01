@@ -1,10 +1,10 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import { Link, Button } from '../ot-ui-components';
 
-const styles = {
+const useStyles = makeStyles({
   button: {
     lineHeight: 1,
     minWidth: '110px',
@@ -36,9 +36,20 @@ const styles = {
   container: {
     display: 'inline-block',
   },
-};
+});
 
-const StudyLocusLink = ({ big, studyId, indexVariantId, classes, label }) => {
+const StudyLocusLink = ({
+  big,
+  studyId,
+  indexVariantId,
+  label,
+}: {
+  big?: boolean;
+  studyId: string;
+  indexVariantId: string;
+  label?: string;
+}) => {
+  const classes = useStyles();
   return (
     <Tooltip
       title="View gene prioritisation results for this locus"
@@ -58,4 +69,4 @@ const StudyLocusLink = ({ big, studyId, indexVariantId, classes, label }) => {
   );
 };
 
-export default withStyles(styles)(StudyLocusLink);
+export default StudyLocusLink;

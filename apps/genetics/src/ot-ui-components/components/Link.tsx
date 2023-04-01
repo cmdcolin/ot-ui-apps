@@ -53,7 +53,7 @@ function Link({
   className,
 }: {
   onClick: () => void;
-  tooltip: string;
+  tooltip?: boolean;
   className?: string;
   footer: boolean;
   external: boolean;

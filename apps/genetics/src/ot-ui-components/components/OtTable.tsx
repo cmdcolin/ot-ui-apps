@@ -84,15 +84,16 @@ function TablePaginationActions({
 
 interface Column {
   id: string;
-  comparator: <T>(a: T, b: T) => number;
+  comparator?: <T>(a: T, b: T) => number;
   verticalHeader?: boolean;
-  tooltip: string;
+  tooltip?: React.ReactNode;
   label: string;
-  renderCell?: (item: Item) => React.ReactElement;
-  renderFilter?: () => React.ReactElement;
+  export?: (item: Item) => boolean; // used only in one spot that I found
+  renderCell?: (item: Item) => React.ReactNode;
+  renderFilter?: () => React.ReactNode;
 }
 
-type Item = Record<string, any>;
+export type Item = Record<string, any>;
 
 const getComparator = (
   columns: Column[],
@@ -102,9 +103,10 @@ const getComparator = (
   const column = columns.find(col => col.id === sortBy);
 
   if (column && column.comparator) {
+    let cb = column.comparator;
     return order === 'asc'
-      ? (a: Item, b: Item) => column.comparator(a, b)
-      : (a: Item, b: Item) => -column.comparator(a, b);
+      ? (a: Item, b: Item) => cb(a, b)
+      : (a: Item, b: Item) => -cb(a, b);
   }
 
   const comparatorValue = order === 'desc' ? 1 : -1;
@@ -210,7 +212,6 @@ function OtTable({
   reportTableSortEvent,
   reportTableDownloadEvent,
 }: {
-  reportTableSortEvent?: (sortBy: string, order: string) => void;
   sortBy: string;
   order?: 'desc' | 'asc';
   pageSize?: number;
@@ -218,16 +219,17 @@ function OtTable({
   error: { graphQLErrors: { message: string }[] };
   columns: Column[];
   data: Item[];
-  columnsFixed: Column[];
-  dataFixed: Item[];
-  verticalHeaders: any;
-  left: boolean;
-  center: boolean;
-  message: string;
-  filters: unknown[];
+  columnsFixed?: Column[];
+  dataFixed?: Item[];
+  verticalHeaders?: any;
+  left?: boolean;
+  center?: boolean;
+  message?: string;
+  filters?: unknown[];
   downloadFileStem: string;
-  excludeDownloadColumns: string[];
-  reportTableDownloadEvent: (format: string) => void;
+  excludeDownloadColumns?: string[];
+  reportTableSortEvent?: (sortBy: string, order: string) => void;
+  reportTableDownloadEvent?: (format: string) => void;
 }) {
   const [page, setPage] = useState(0);
   const [sortBy, setSortBy] = useState(sortByInitial);
