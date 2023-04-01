@@ -93,6 +93,7 @@ export default function AutocompleteSearch({
       inputValueUpdate("");
       // return false;
     }
+    return undefined;
   }, []);
 
   useEffect(() => {

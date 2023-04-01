@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export interface SearchResult {
+  description: string;
   type: string;
   symbol: string;
   name: string;
@@ -100,14 +101,13 @@ function SearchListItem({
             <span className={classes.id}>{item.id}</span>
           </Typography>
         </div>
-        {isTopHit &&
-          item.description && (
-            <div className="functionDescription">
-              <Typography variant="subtitle1">
-                {item.description.substring(0, 180)} ...{" "}
-              </Typography>
-            </div>
-          )}
+        {isTopHit && item.description && (
+          <div className="functionDescription">
+            <Typography variant="subtitle1">
+              {item.description.substring(0, 180)} ...{" "}
+            </Typography>
+          </div>
+        )}
 
         <div className={classes.justifyBetween}>
           <Typography variant="caption">
