@@ -1,9 +1,15 @@
 import FileSaver from 'file-saver';
+import { Item } from '../components/OtTable';
 
 const UNEXPECTED_FORMAT =
   'Unexpected format. Supported options are csv, tsv and json.';
 
-const pick = (object, keys) => {
+interface Header {
+  label: string;
+  id: string;
+  export?: (arg: Item) => unknown;
+}
+const pick = (object: Record<string, any>, keys: Header[]) => {
   return keys.reduce(function (o, k) {
     // take into account optional export() function, which takes precedence as per other download formats
     o[k.id] = k.export ? k.export(object) : object[k.id];
@@ -11,15 +17,27 @@ const pick = (object, keys) => {
   }, {});
 };
 
-const quoteIfString = d => (typeof d === 'string' ? `"${d}"` : d);
+const quoteIfString = (d: unknown) => (typeof d === 'string' ? `"${d}"` : d);
 
-const asJSONString = ({ rows, headerMap }) => {
+const asJSONString = ({
+  rows,
+  headerMap,
+}: {
+  rows: Item[];
+  headerMap: Header[];
+}) => {
   // use the full headerMap which contain optional export() function for each header
   const rowsHeadersOnly = rows.map(row => pick(row, headerMap));
   return JSON.stringify(rowsHeadersOnly);
 };
 
-const asCSVString = ({ rows, headerMap }) => {
+const asCSVString = ({
+  rows,
+  headerMap,
+}: {
+  rows: Item[];
+  headerMap: Header[];
+}) => {
   const separator = ',';
   const lineSeparator = '\n';
   const headersString = headerMap
@@ -37,7 +55,13 @@ const asCSVString = ({ rows, headerMap }) => {
   return [headersString, ...rowsArray].join(lineSeparator);
 };
 
-const asTSVString = ({ rows, headerMap }) => {
+const asTSVString = ({
+  rows,
+  headerMap,
+}: {
+  rows: Item[];
+  headerMap: Header[];
+}) => {
   const separator = '\t';
   const lineSeparator = '\n';
   const headersString = headerMap.map(d => d.label).join(separator);
@@ -64,7 +88,7 @@ const asContentString = ({ rows, headerMap, format }) => {
   }
 };
 
-const asMimeType = format => {
+const asMimeType = (format: string) => {
   switch (format) {
     case 'json':
       return 'application/json;charset=utf-8';
@@ -85,7 +109,7 @@ const downloadTable = ({
 }: {
   rows: unknown[];
   headerMap: unknown;
-  format: unknown;
+  format: string;
   filenameStem: string;
 }) => {
   if (!rows || rows.length === 0) {
