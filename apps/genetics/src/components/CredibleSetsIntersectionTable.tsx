@@ -6,8 +6,9 @@ import {
   DataDownloader,
   significantFigures,
 } from '../ot-ui-components';
+import { Column } from '../ot-ui-components/components/OtTable';
 
-const tableColumns = [
+const tableColumns: Column[] = [
   {
     id: 'id',
     label: 'Variant',
@@ -37,7 +38,14 @@ const tableColumns = [
   },
 ];
 
-const getDownloadData = data => {
+const getDownloadData = (
+  data: {
+    id: string;
+    position: number;
+    posteriorProbabilityMax: number;
+    posteriorProbabilityProd: number;
+  }[]
+) => {
   return data.map(d => ({
     id: d.id,
     position: d.position,
@@ -57,7 +65,6 @@ const CredibleSetsIntersectionTable = ({ filenameStem, data }) => {
       />
       <OtTableRF
         loading={false}
-        error={false}
         columns={tableColumns}
         data={data}
         sortBy="posteriorProbabilityProd"

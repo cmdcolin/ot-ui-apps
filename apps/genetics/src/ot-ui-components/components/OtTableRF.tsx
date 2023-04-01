@@ -130,7 +130,7 @@ function OtTableRF({
   downloadFileStem?: string;
   excludeDownloadColumns?: string[];
   totalRowsCount?: number;
-  headerGroups: {
+  headerGroups?: {
     colspan: number;
     label: React.ReactNode;
   }[];

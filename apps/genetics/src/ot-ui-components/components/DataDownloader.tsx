@@ -6,6 +6,7 @@ import { Skeleton } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core';
 
 import downloadTable from '../helpers/downloadTable';
+import { Column } from './OtTable';
 
 const useStyles = makeStyles({
   container: {
@@ -20,7 +21,7 @@ const useStyles = makeStyles({
 });
 
 function handleDownload(
-  headers: string[],
+  headers: Column[],
   rows: unknown[],
   fileStem: string,
   format: string
@@ -39,7 +40,7 @@ function DataDownloader({
   fileStem,
   loading,
 }: {
-  tableHeaders: string[];
+  tableHeaders: Column[];
   rows: any[];
   loading?: boolean;
   fileStem: string;

@@ -4,7 +4,7 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import { Link, OtTable, commaSeparate } from '../ot-ui-components';
 
-import ManhattanFlat from '../components/ManhattanFlat';
+import ManhattanFlat, { OtVariant } from '../components/ManhattanFlat';
 import { Column, Item } from '../ot-ui-components/components/OtTable';
 
 const CloseButton = (props: IconButtonProps) => (
@@ -18,7 +18,7 @@ export const tableColumns = ({
   onClickIntersectionLocus,
 }: {
   onDeleteStudy?: (arg: string) => () => void;
-  onClickIntersectionLocus?: (arg: string) => () => void;
+  onClickIntersectionLocus?: (arg: OtVariant) => () => void;
 }): Column[] => [
   {
     id: 'deleteRow',
@@ -111,7 +111,7 @@ function ManhattansTable({
   studies: Item[];
   rootStudy: Item;
   onDeleteStudy: (arg: string) => () => void;
-  onClickIntersectionLocus: (arg: string) => () => void;
+  onClickIntersectionLocus: (arg: OtVariant) => () => void;
   pileupPseudoStudy: Item;
 }) {
   const columns = tableColumns({ onDeleteStudy });

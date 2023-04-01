@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.5",
+    "@types/react-measure": "^2.0.8",
     "prettier": "^2.5.1",
     "turbo": "latest",
     "typescript": "^4.9.5"

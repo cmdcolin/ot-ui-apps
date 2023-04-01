@@ -48,6 +48,7 @@
     "react-select": "^5.3.2",
     "react-sizeme": "^3.0.2",
     "react-sticky": "^6.0.3",
+    "react-use-measure": "^2.1.1",
     "smiles-drawer": "^1.1.22",
     "typeface-inter": "^3.3.0",
     "ui": "*"

@@ -1,5 +1,5 @@
 import FileSaver from 'file-saver';
-import { Item } from '../components/OtTable';
+import { Column, Item } from '../components/OtTable';
 
 const UNEXPECTED_FORMAT =
   'Unexpected format. Supported options are csv, tsv and json.';
@@ -108,7 +108,7 @@ const downloadTable = ({
   filenameStem,
 }: {
   rows: unknown[];
-  headerMap: unknown;
+  headerMap: Column[];
   format: string;
   filenameStem: string;
 }) => {

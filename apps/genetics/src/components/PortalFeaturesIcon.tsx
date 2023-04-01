@@ -1,20 +1,25 @@
 import React from 'react';
-import SvgIcon from '@material-ui/core/SvgIcon';
-import withStyles from '@material-ui/core/styles/withStyles';
+import SvgIcon, { SvgIconProps } from '@material-ui/core/SvgIcon';
 import classNames from 'classnames';
+import { makeStyles } from '@material-ui/core';
 
-const styles = theme => {
-  return {
-    root: {
-      display: 'block',
-      width: '450px',
-      height: '450px',
-      fill: theme.palette.primary.main,
-    },
-  };
-};
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'block',
+    width: '450px',
+    height: '450px',
+    fill: theme.palette.primary.main,
+  },
+}));
 
-const PortalFeaturesIcon = ({ className, classes, ...rest }) => {
+const PortalFeaturesIcon = ({
+  className,
+  ...rest
+}: {
+  className: string;
+  rest: SvgIconProps;
+}) => {
+  const classes = useStyles();
   const iconClasses = classNames(className, classes.root);
   return (
     <SvgIcon
@@ -263,4 +268,4 @@ const PortalFeaturesIcon = ({ className, classes, ...rest }) => {
   );
 };
 
-export default withStyles(styles)(PortalFeaturesIcon);
+export default PortalFeaturesIcon;

@@ -1,6 +1,5 @@
 import React from 'react';
-import { withContentRect } from 'react-measure';
-
+import useMeasure from 'react-use-measure';
 import theme from './theme';
 import { chromosomesWithCumulativeLengths } from '../utils';
 
@@ -10,11 +9,27 @@ const chromosomeMap = chromosomesWithCumulativeLengths.reduce((acc, d) => {
 }, {});
 const chromosomeLabelWidthThreshold = 700;
 
-const ManhattanFlat = ({ measureRef, data, contentRect, onClick }) => {
-  const { width } = contentRect.bounds;
+export interface OtVariant {
+  variantIdA?: string;
+  variantIdB?: string;
+  position: number;
+  chromosome: string;
+  variantId: string;
+  inIntersection: boolean;
+}
+
+const ManhattanFlat = ({
+  data,
+  onClick,
+}: {
+  data: OtVariant[];
+  onClick?: (arg: OtVariant) => void;
+}) => {
+  const [ref, bounds] = useMeasure();
+  const { width } = bounds;
   const height = 20;
   return (
-    <div ref={measureRef}>
+    <div ref={ref}>
       <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height}>
         {width ? (
           <React.Fragment>
@@ -77,7 +92,7 @@ const ManhattanFlat = ({ measureRef, data, contentRect, onClick }) => {
                     }
                     strokeWidth={2}
                     cursor={onClick ? 'pointer' : 'inherit'}
-                    onClick={() => onClick(d)}
+                    onClick={() => onClick?.(d)}
                   />
                 );
               })}
@@ -89,4 +104,4 @@ const ManhattanFlat = ({ measureRef, data, contentRect, onClick }) => {
   );
 };
 
-export default withContentRect('bounds')(ManhattanFlat);
+export default ManhattanFlat;
